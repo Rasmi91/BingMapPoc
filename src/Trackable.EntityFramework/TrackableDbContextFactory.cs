@@ -15,7 +15,7 @@ namespace Trackable.EntityFramework
             SqlProviderServices.SqlServerTypesAssemblyName =
                "Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91";
 
-            return new TrackableDbContext("Server=(localdb)\\mssqllocaldb;Database=Trackable;Trusted_Connection=True;");
+            return new TrackableDbContext("Server=bingmap.database.windows.net;Database=TrackableNew;Trusted_Connection=false;User Id=rasmim;Password=rasmi@123;MultipleActiveResultSets=true;");
         }
     }
 }

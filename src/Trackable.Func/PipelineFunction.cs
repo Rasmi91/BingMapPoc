@@ -20,7 +20,7 @@ namespace Trackable.Func
     {
         [FunctionName("PipelineInitiator")]
         public async static Task Initiate(
-            [TimerTrigger("0 0/30 * * * *", RunOnStartup = true)]TimerInfo myTimer,
+            [TimerTrigger("0 0/10 * * * *", RunOnStartup = true)]TimerInfo myTimer,
             [Queue("%TripDetectionQueue%")]ICollector<string> outgoingMessage,
             Binder binder,
             TraceWriter log)
