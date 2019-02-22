@@ -73,6 +73,7 @@ namespace Trackable.Web
                     cfg.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     cfg.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
+
                 .AddCookie(cookieopt =>
                 {
                     cookieopt.Events.OnRedirectToAccessDenied = context =>
@@ -200,7 +201,7 @@ namespace Trackable.Web
             app.UseCors("AllowAll");
 
             // Authentication
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
             // Logging
             loggerFactory.AddAzureWebAppDiagnostics();

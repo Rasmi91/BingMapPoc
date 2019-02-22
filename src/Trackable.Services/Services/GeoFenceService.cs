@@ -30,6 +30,11 @@ namespace Trackable.Services
 
         public async Task<IEnumerable<string>> HandlePoints(string assetId, params IPoint[] points)
         {
+            foreach (var author in points)
+            {
+                System.Diagnostics.Trace.WriteLine(author.Latitude);
+                Console.WriteLine(author);
+            }           
             var notifiedFenceIds = new List<string>();
             var tasks = new List<Task>();
 
@@ -90,7 +95,7 @@ namespace Trackable.Services
 
                 tasks.AddRange(fence.EmailsToNotify.Select(email => notificationService.NotifyViaEmail(
                     email,
-                    $"{fence.Name} Geofence was triggered by asset {asset.Name}",
+                $"{fence.Name} Geofence was triggered by asset {asset.Name}",
                     "",
                     $"<strong>{fence.FenceType.ToString()}</strong> Geofence <strong>{fence.Name}</strong> was triggered by asset  <strong>{asset.Name}</strong> at  <strong>{DateTime.UtcNow.ToString("G")} (UTC)</strong>")));
 
