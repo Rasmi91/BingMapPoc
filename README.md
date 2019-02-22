@@ -1,78 +1,77 @@
-# Bing Maps Fleet Tracker - Backend Services
+# Bing Maps Fleet Tracker
 
-The backend is divided into two main components:
+Bing Maps Fleet Tracker is a fleet management solution based on the Bing Maps APIs. It offers functionalities that enable tracking and managing a fleet of vehicles in real time. For more details, read this [blog post](https://aka.ms/bingmapsfleettrackerblog).
 
-* The Restful service with which the administration portal and mobile client communicate.
-* An Azure function project that performs the trip detection.
+## Getting Started
 
-## Getting the sources
+To get this project up and running, the easiest way is to use the [Bing Maps Fleet Tracker Deployment Portal](https://aka.ms/bingmapsfleettracker), which one-click deploy the Bing Maps Fleet Tracker solution into your Azure subscription. For a step by step walkthrough of how to deploy use the deployment portal, see [out of the box deployment](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/DEPLOYMENT.md). None of the data entered on the deployment portal is stored by Bing Maps Fleet Tracker. It is only used to configure your deployment.
 
-The sources of the Backend Services of Bing Maps Fleet Tracker are included in this repository. If you already downloaded the sources skip this step, otherwise clone the repository to a folder of your choosing and move to the `Backend/` folder.
+You can obtain a prebuilt apk of the Android client [here](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/releases). For the iOS client, you will need to [build it from source](#build-and-run).
 
-``` Bash
-git clone https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/
-cd Bing-Maps-Fleet-Tracker/Backend
-```
+You can also build and run the project from source as detailed [here](#build-and-run).
 
-## Prerequisites
+For a walkthrough of using the Bing Maps Fleet Tracker solution, see [WALKTHROUGH.md](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/WALKTHROUGH.md).
 
-* Windows environment
-* [Git](https://git-scm.com/)
-* [Visual Studio 2017](https://www.visualstudio.com/downloads/) including the capabilities:
-  * ASP.NET and Web Development
-  * Azure Development
-  * .Net Core Development Tools (.Net Core 2)
+### Build and Run
 
-## Build and Run
+The Bing Maps Fleet Tracker solution consist of 3 major components:
 
-### Rest Service
+* [The Backend Services](#backend-services)
+* [The Administration Portal](#administration-portal)
+* [The Mobile Client](#mobile-client)
 
-The Restful service is a .Net Core 2 web application that targets .Net Framework 4.6 for compatibility with Entity Framework 6. Entity Framework 6 is needed for its Geospatial support which Entity Framework Core (Entity Framework 7) does not yet support.
+Each of these components can be built and run separately, and each can be replaced with implementations of your own.
 
-1. Open solution `Backend/Trackable.sln` using Visual Studio 2017
-2. Select `Build` > `Build Solution` from the menus. Your solution should build successfully.
-3. Navigate to the `appsettings.json` file under the `Trackable.Web` project. You will need to update some settings here to get your service up and running.
-    * "ConnectionStrings: DefaultConnection": Should point to a Sql Server instance. By default this is set to localdb.
-    * "Authorization: ClientId, Client Secret": Should include the Application Id and Application Secret of a [AAD V2 application](https://apps.dev.microsoft.com/?deeplink=/appList). Note:- While adding app for bing map registration, make sure to add redirect url in format "http://localhost:<port_number>/signin-oidc". Where <port_number> is the port your application uses.
-    * "Authorization: OwnerEmail": Email of the owner of the deployment. On a fresh deployment, this is the only email that will be allowed to access the service.
-    * "Authorization: SecurityKey": A string of at least 128 bits that will be used in the signing and validation of the JWT tokens.
-    * "SubscriptionKeys: BingMapsKey": A valid Bing Maps Subscription Key for geocoding and frontend map controls. You can obtain a bing maps key by following this [article](https://msdn.microsoft.com/en-us/library/ff428642.aspx).
-    * "Serving: ServeFrontend": Specifies whether the service should serve the administration portal from `wwwroot/dist`. If you set this to true, you must build the administration portal with the environment `self` and copy the artifacts from `Frontend/dist/` to `backend/Trackable.Web/wwwroot/dist/`. Command to build using `self environment` is `ng build --env=self`
-    * "Serving: ServeSwagger": Specifies whether the service should serve a swagger endpoint.
-    * "Serving: IsDebug": IsDebug turns off RequireHttps and turns on some diagnostic logging.
-    * (Optional) "SendGrid: ApiKey, FromEmailAddress": Specifies the SendGrid account used for sending Geofence email alerts. You can sign up for SendGrid keys from the [SendGrid website](https://sendgrid.com/).
-    * (Optional) "Instrumentation": Urls used to send telemetry Microsoft, see [Telemetry collected by Bing Maps Fleet Tracker](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/README.md#telemetry-collected-by-bing-maps-fleet-tracker).
-    * (Optional) "Versioning": Used by the service to notify when a newer version is available in the deployment portal.
-4. Right click `Trackable.Web` project and choose option `Set as Startup Project`.
-5. Run project using Visual Studio.
+#### Backend Services
 
-### Azure Functions
+The backend services are responsible for the collection and processing of location information, the provisioning of tracking devices and assets, dispatching, and report generation. They are made up of an ASP.NET Core 2 service, and two Azure Functions. For more information on building an running the backend services see [Backend\README.md](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/Backend/README.md).
 
-1. Open solution `Backend/Trackable.sln` using Visual Studio 2017
-2. Select `Build` > `Build Solution` from the menus. Your solution should build successfully.
-3. Navigate to the `appsettings.json` file under the `Trackable.Func` project. You will need to update some settings here to get your service up and running.
-    * "Values: DatabaseConnection": Should point to a Sql Server instance. By default this is set to localdb.
-    * "Values: BingMapsKey": A valid Bing Maps Subscription Key for geocoding and frontend map controls. You can obtain a bing maps key by following this [article](https://msdn.microsoft.com/en-us/library/ff428642.aspx).
-    * "Values: AzureWebJobsStorage": Specifies the connection string to an Azure Storage Account which is used internally in the Azure Function.
-4. Right click `Trackable.Func` project and choose option `Set as Startup Project`.
-5. Run project using Visual Studio.
+#### Administration Portal
 
-### Using DotNet CLI
+The administration portal is an angular application that exposes the functionalities of the backend to the deployment administrators. It can be used to view reports, track and provision assets, and compare dispatching routes. For more information on building an running the administration portal see [Frontend\README.md](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/Frontend/README.md).
 
-If you wish to build the solution using dotnet CLI, you will need to run the following command from the root directory.
+#### Mobile Client
 
-``` Bash
-dotnet build Backend/
-```
+The mobile client is an ionic mobile application responsible for collection of asset location information and the forwarding of this information to the backend. It is meant to provide an out of the box background tracking solution but it is not the only way to integrate with Bing Maps Fleet Tracker; any GPS device with an internet connection can be used to provide the background tracking (see [Using the Rest APIs](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/WALKTHROUGH.md#using-the-rest-apis)). For more information on building and running the mobile client see [MobileClient\README.md](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/blob/master/MobileClient/README.md).
 
-For building inidividual projects, you will need to specify the path to the directory containing the csproj.
+## Telemetry collected by Bing Maps Fleet Tracker
 
-``` Bash
-dotnet build Backend/src/Trackable.Web/
-```
+After deployment, on your first use of the application, you will be prompted to allow us to collect
+anonymous aggregate telemetry and error/warning log data. We use the telemetry data to get a feel for the
+usage of this project. Error log data are used to focus our efforts on fixing the issues you face.
 
-For running the Rest Service you would use
+Here is a list of all the telemetry items we collect:
 
-``` Bash
-dotnet run --project Backend/src/Trackable.Web/Trackable.Web.csproj
-```
+* Deployment Id: this is a random GUID that is unique for each deployment.
+* Assets count: the total number of vehicles registered.
+* Locations count: the total number of locations stored.
+* Auto locations count: the number of automatically detected locations.
+* Tracking devices count: the total number of tracking devices.
+* Geo-fences count: the number of geo-fences setup.
+* Tracking points count: the number of tracking points stored on the system.
+
+Error/warning log data collected consist of:
+
+* Deployment Id: this is a random GUID that is unique for each deployment.
+* Software version: the version of the software causing the error/warning.
+* Error/warning message: the error/warning message.
+
+You can always enable/disable the data collection from the settings tab in your administration portal.
+
+## Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com).
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## History
+
+See [release history](https://github.com/Microsoft/Bing-Maps-Fleet-Tracker/releases).
